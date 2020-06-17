@@ -22,5 +22,6 @@ Route::group(['prefix' => 'student'], function () {
     Route::post('/login', 'Student\AuthController@login');
     Route::get('/email/resend', 'Student\VerificationController@resend')->name('verification.resend');
     Route::get('/email/verify/{id}/{hash}', 'Student\VerificationController@verify')->name('verification.verify');
-    
 });
+
+Route::get('/programs', 'ProgramController@index');

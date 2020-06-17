@@ -49,7 +49,7 @@ class StudentVerifyEmailNotification extends Notification
                     ->markdown('emails.verify-email',[
                         'url' => $this->verificationUrl($notifiable),
                         'notifiable' => $notifiable
-                    ]);
+            ]);
     }
 
          /*
@@ -59,11 +59,6 @@ class StudentVerifyEmailNotification extends Notification
    */
    protected function verificationUrl($notifiable)
    {
-
-       
-    //    $url  = 'http://localhost:8080/student/verify/'. $notifiable->getKey(). '/'. sha1($notifiable->getEmailForVerification());
-   
-
         
           $tempURL = URL::temporarySignedRoute(
                 'verification.verify',
@@ -78,8 +73,7 @@ class StudentVerifyEmailNotification extends Notification
        
          $query = explode('verify', $tempURL)[1];
         
-         return 'http://localhost:8080/student/verify' . $query;
-         
+         return 'http://localhost:8080/student/verify' . $query;      
     
    }
     /**

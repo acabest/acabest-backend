@@ -57,9 +57,6 @@ class VerificationController extends Controller
     public function verify(Request $request)
     {
     
-        
-        // auth()->loginUsingId($request->route('id'));
-        // Auth::loginUsingId($request->route('id'));
         Auth::guard('student')->login(Student::findOrFail($request->route('id')));
 
 
