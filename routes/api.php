@@ -20,12 +20,17 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'student'], function () {
     Route::post('/register', 'Student\AuthController@register');
     Route::post('/login', 'Student\AuthController@login');
+
     Route::get('/email/resend', 'Student\VerificationController@resend')->name('verification.resend');
     Route::get('/email/verify/{id}/{hash}', 'Student\VerificationController@verify')->name('verification.verify');
     Route::post('/password/reset', 'Student\PasswordResetController@create');
     Route::get('/password/reset/{token}', 'Student\PasswordResetController@find');
     Route::post('/password/reset', 'Student\PasswordResetController@reset');
     Route::get('/details', 'Student\AuthController@studentDetails');
+    
 });
+
+Route::get('/login/{service}', 'SocialLoginController@redirect');
+Route::get('/login/{service}/callback', 'SocialLoginController@callback');
 
 Route::get('/programs', 'ProgramController@index');

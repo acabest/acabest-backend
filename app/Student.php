@@ -50,4 +50,14 @@ class Student extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
        $this->notify(new Notifications\Student\VerifyEmailNotification);
     }
+
+    public function social()
+    {
+        return $this->hasMany(UserSocial::class);
+    }
+
+    public function hasSocialLinked($service)
+    {
+        return (bool) $this->social->where('service', $service)->count();
+    }
 }
