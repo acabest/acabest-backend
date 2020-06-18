@@ -22,6 +22,10 @@ Route::group(['prefix' => 'student'], function () {
     Route::post('/login', 'Student\AuthController@login');
     Route::get('/email/resend', 'Student\VerificationController@resend')->name('verification.resend');
     Route::get('/email/verify/{id}/{hash}', 'Student\VerificationController@verify')->name('verification.verify');
+    Route::post('/password/reset', 'Student\PasswordResetController@create');
+    Route::get('/password/reset/{token}', 'Student\PasswordResetController@find');
+    Route::post('/password/reset', 'Student\PasswordResetController@reset');
+    Route::get('/details', 'Student\AuthController@studentDetails');
 });
 
 Route::get('/programs', 'ProgramController@index');

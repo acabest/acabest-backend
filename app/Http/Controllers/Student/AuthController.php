@@ -4,15 +4,23 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterStudentRequest;
+use App\Http\Resources\StudentResource;
 use App\Student;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Password;
+use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+// use Illuminate\Foundation\Auth\ResetsPasswords;
 class AuthController extends Controller
 {
-    //
+  
+    // use ResetsPasswords;
 
+    public function __construct()
+    {
+        $this->middleware('auth:student')->only(['studentDetails']);
+    }
     public function register(RegisterStudentRequest $request)
     {
         $student = Student::create([
@@ -79,5 +87,11 @@ class AuthController extends Controller
             'expires_in' => auth('student')->factory()->getTTL() * 60
         ]);
     }
+
+    public function studentDetails()
+    {
+        return new StudentResource(auth('student')->user());
+    }
+
 }
 

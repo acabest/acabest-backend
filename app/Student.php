@@ -48,6 +48,6 @@ class Student extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function sendEmailVerificationNotification()
     {
-       $this->notify(new Notifications\StudentVerifyEmailNotification);
+       $this->notify(new Notifications\Student\VerifyEmailNotification);
     }
 }

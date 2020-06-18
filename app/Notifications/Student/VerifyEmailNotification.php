@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 
 
-class StudentVerifyEmailNotification extends Notification
+class VerifyEmailNotification extends Notification
 {
     use Queueable;
 
