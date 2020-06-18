@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Notifications\Student\PasswordResetRequest;
 use App\Notifications\Student\PasswordResetSuccess;
 use App\PasswordReset;
-use App\Student;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -21,7 +21,10 @@ class PasswordResetController extends Controller
             'email' => 'required|string|email'
         ]);
 
-        $student = Student::where('email', $request->email)->first();
+        $student = User::where([
+            'email' => $request->email,
+            'role' => 'student'
+        ])->first();
 
         if (!$student) 
         {
@@ -90,7 +93,7 @@ class PasswordResetController extends Controller
             ], 404);
         }
 
-        $student = Student::where('email', $passwordReset->email)->first();
+        $student = User::where('email', $passwordReset->email)->first();
 
         if (!$student)
         {

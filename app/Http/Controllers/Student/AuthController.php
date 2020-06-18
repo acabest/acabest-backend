@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterStudentRequest;
 use App\Http\Resources\StudentResource;
-use App\Student;
+use App\User;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 // use Illuminate\Foundation\Auth\ResetsPasswords;
+
 class AuthController extends Controller
 {
   
@@ -19,24 +20,25 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:student')->only(['studentDetails']);
+        $this->middleware('auth:api')->only(['studentDetails']);
     }
     public function register(RegisterStudentRequest $request)
     {
-        $student = Student::create([
+        $student = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'mobile_number' => $request->mobile_number,
-            'program_id' => $request->program_id
+            'program_id' => $request->program_id,
+            'role' => 'student'
         ]);
         
-        $student = Student::findOrFail($student->id);
+        $student = User::findOrFail($student->id);
 
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth('student')->attempt($credentials))
+        if (! $token = auth('api')->attempt($credentials))
         {
             return response()->json([
                 'error' => 'Unauthorized'
@@ -57,7 +59,7 @@ class AuthController extends Controller
 
         $credentials = request(['email', 'password']);
 
-        if (! $token = auth('student')->attempt($credentials))
+        if (! $token = auth('api')->attempt($credentials))
         {
             return response()->json([
                 'message' => 'Invalid Credentials'
@@ -67,7 +69,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('student')->factory()->getTTL() * 60
+            'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);
     }
 
@@ -84,13 +86,13 @@ class AuthController extends Controller
             'student' => $student,
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('student')->factory()->getTTL() * 60
+            'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);
     }
 
     public function studentDetails()
     {
-        return new StudentResource(auth('student')->user());
+        return new StudentResource(auth('api')->user());
     }
 
 }

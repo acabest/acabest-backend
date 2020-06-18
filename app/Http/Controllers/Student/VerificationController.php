@@ -7,7 +7,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Student;
+use App\User;
 use Illuminate\Auth\Events\Verified;
 
 class VerificationController extends Controller
@@ -41,7 +41,7 @@ class VerificationController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:student')->only('resend');
+        $this->middleware('auth:api')->only('resend');
         $this->middleware('signed')->only('verify');
         $this->middleware('throttle:6,1')->only('verify', 'resend');
     }
@@ -57,7 +57,7 @@ class VerificationController extends Controller
     public function verify(Request $request)
     {
     
-        Auth::guard('student')->login(Student::findOrFail($request->route('id')));
+        Auth::guard('api')->login(User::findOrFail($request->route('id')));
 
 
         if (! hash_equals((string) $request->route('id'), (string) $request->user()->getKey())) {
@@ -96,8 +96,9 @@ class VerificationController extends Controller
      */
     public function resend(Request $request)
     {
+        
         if ($request->user()->hasVerifiedEmail()) {
-
+            
             return response()->json([
                 'message' => 'Student already verified'
             ]);

@@ -14,8 +14,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'student',
-        'passwords' => 'students',
+        'guard' => 'api',
+        'passwords' => 'users',
     ],
 
     /*
@@ -41,9 +41,9 @@ return [
             'provider' => 'users',
         ],
 
-        'student' => [
+        'api' => [
             'driver' => 'jwt',
-            'provider' => 'students',
+            'provider' => 'users',
             'hash' => false,
         ],
     ],
@@ -69,11 +69,6 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\User::class,
-        ],
-        
-        'students' => [
-            'driver' => 'eloquent',
-            'model' => App\Student::class,
         ],
 
         // 'users' => [
@@ -104,12 +99,6 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
-        'students' => [
-            'provider' => 'students',
-            'table' => 'password_resets',
-            'expire' => 60,
-            'throttle' => 60,
-        ]
     ],
 
     /*

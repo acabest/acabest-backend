@@ -11,6 +11,6 @@ class UserSocial extends Model
     protected $guarded = [];
     public function user()
     {
-        return $this->hasOne(Student::class);
+        return $this->hasOne(User::class);
     }
 }
