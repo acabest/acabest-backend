@@ -11,8 +11,13 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
-Auth::routes();
+// Auth::routes();
+Route::get('/', function(){ 
+    return response()->json([
+        'message' => 'Acabest API is running'
+    ]);
+});
