@@ -46,6 +46,11 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        'tutor' => [
+            'driver' => 'jwt',
+            'provider' => 'tutors',
+            'hash' => false
+        ]
     ],
 
     /*
@@ -70,6 +75,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\User::class,
         ],
+        'tutors' => [
+            'driver' => 'eloquent',
+            'model' => App\Tutor::class,
+        ]
 
         // 'users' => [
         //     'driver' => 'database',
@@ -99,6 +108,12 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        'tutors' => [
+            'provider' => 'tutors',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60, 
+        ]
     ],
 
     /*

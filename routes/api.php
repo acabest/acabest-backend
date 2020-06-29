@@ -28,9 +28,13 @@ Route::group(['prefix' => 'student'], function () {
     Route::post('/password/reset/create', 'Student\PasswordResetController@create');
     Route::get('/password/reset/{token}', 'Student\PasswordResetController@find');
     Route::post('/password/reset', 'Student\PasswordResetController@reset');
-    Route::get('/details', 'Student\AuthController@studentDetails');
-   
+    Route::get('/details', 'Student\AuthController@studentDetails'); 
+});
+
+Route::group(['prefix' => 'tutor'], function () {
     
+    Route::post('/register', 'Tutor\AuthController@register');
+
 });
 
 Route::get('/login/{service}', 'SocialLoginController@redirect');
