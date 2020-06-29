@@ -34,6 +34,7 @@ Route::group(['prefix' => 'student'], function () {
 Route::group(['prefix' => 'tutor'], function () {
     
     Route::post('/register', 'Tutor\AuthController@register');
+    Route::post('/login', 'Tutor\AuthController@login');
 
 });
 

@@ -47,12 +47,35 @@ class AuthController extends Controller
         if (! $token = auth('tutor')->attempt($credentials))
         {
             return response()->json([
-                'error' => 'Unauthorized'
+                'message' => 'Invalid Credentials'
             ], 401);
         }
 
         return $this->respondWithToken($tutor, $token);
         
+    }
+
+    public function login(Request $request)
+    {   
+        $request->validate([
+            'email' => 'required',
+            'password' => 'required'
+        ]);
+
+        $credentials = request(['email', 'password']);
+
+        if (! $token = auth('tutor')->attempt($credentials))
+        {
+            return response()->json([
+                'message' => 'Invalid Credentials'
+            ], 422);
+        }
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth('tutor')->factory()->getTTL() * 60
+        ]);
     }
 
      /**
@@ -68,7 +91,7 @@ class AuthController extends Controller
             'tutor' => $tutor,
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60
+            'expires_in' => auth('tutor')->factory()->getTTL() * 60
         ]);
     }
 }
