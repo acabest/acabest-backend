@@ -37,7 +37,7 @@ class AuthController extends Controller
             'image' => 'images/' . $imageName
         ]);
 
-        $request->image->move(public_path('images'), $imageName);
+        $request->image->move(public_path('images/profiles'), $imageName);
 
         $credentials = [
             'email' => $request->email,
@@ -48,7 +48,7 @@ class AuthController extends Controller
         {
             return response()->json([
                 'message' => 'Invalid Credentials'
-            ], 401);
+            ], 422);
         }
 
         return $this->respondWithToken($tutor, $token);

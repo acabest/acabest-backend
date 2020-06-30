@@ -35,4 +35,9 @@ class Tutor extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password'
     ];
+
+    public function quizpacks()
+    {
+        return $this->hasMany(QuizPack::class);
+    }
 }
