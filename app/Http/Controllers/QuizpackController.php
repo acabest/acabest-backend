@@ -20,7 +20,7 @@ class QuizpackController extends Controller
             'short_description' => 'required',
             'detailed_description' => 'required',
             'course_id' => 'required',
-            'topic' => 'required',
+            'time' => 'required|integer',
             'thumbnail_image' => 'required|image|mimes:jpeg,png,jpg'
         ]);
 
@@ -29,7 +29,8 @@ class QuizpackController extends Controller
             'short_description' => $request->short_description,
             'detailed_description' => $request->detailed_description,
             'course_id' => $request->course_id,
-            'topic' => $request->topic
+            // 'topic' => $request->topic
+            'time' => $request->time
         ])->get()->first();
 
         if ($alreadyAvailable) {
@@ -45,12 +46,42 @@ class QuizpackController extends Controller
             'thumbnail_image' => $imageName
         ]);
 
-        $request->thumbnail_image->move(public_path('images/thumbnails'), $imageName);
+        $request->thumbnail_image->move(public_path('images/quizpack-thumbnails'), $imageName);
 
         return response()->json([
             'message' => 'Quizpack created',
             'quizpack' => $quizpack
         ], 201);
 
+    }
+
+    public function addQuestion(QuizPack $quizpack, Request $request)
+    {
+        $request->validate([
+            'question' => 'required',
+            'optionA' => 'required',
+            'optionB' => 'required',
+            'answer' => 'required',
+            'answer_explanation' => 'required',
+        ]);
+
+        if ($request->hasFile('image'))
+        {
+            $request->validate([
+                'image' => 'image|mimes:jpg,png,jpeg'
+            ]);
+            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
+        }
+        $question = $quizpack->questions()->create($request->all());
+
+        $question->update([
+            'image' => $imageName
+        ]);
+        $request->image->move(public_path('images/question-images'), $imageName);
+
+        return response()->json([
+            'message' => 'question created',
+            'question' => $question
+        ], 201);
     }
 }
