@@ -35,9 +35,9 @@ Route::group(['prefix' => 'tutor'], function () {
     
     Route::post('/register', 'Tutor\AuthController@register');
     Route::post('/login', 'Tutor\AuthController@login');
-    Route::post('/quizpack/create', 'QuizpackController@create');
-    Route::post('/quizpack/{quizpack}/question', 'QuizpackController@addQuestion');
-    
+    Route::post('/quizpack/create', 'Tutor\QuizpackController@create');
+    Route::post('/quizpack/{quizpack}/question', 'Tutor\QuizpackController@addQuestion');
+    Route::get('/quizpacks', 'Tutor\QuizpackController@tutorQuizpacks');
 });
 
 Route::get('/login/{service}', 'SocialLoginController@redirect');

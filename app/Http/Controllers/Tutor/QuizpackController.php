@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Tutor;
 
 use App\QuizPack;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\QuizpackResource;
 
 class QuizpackController extends Controller
 {
@@ -83,5 +85,12 @@ class QuizpackController extends Controller
             'message' => 'question created',
             'question' => $question
         ], 201);
+    }
+
+    public function tutorQuizpacks()
+    {
+        return response()->json([
+            'quizpacks' => QuizpackResource::collection(auth('tutor')->user()->quizpacks)
+        ]);
     }
 }
