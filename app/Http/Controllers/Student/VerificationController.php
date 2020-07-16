@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendEmailVerificationNotification;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 use Illuminate\Http\Request;
@@ -104,7 +105,9 @@ class VerificationController extends Controller
             ]);
         }
 
-        $request->user()->sendEmailVerificationNotification();
+        // $request->user()->sendEmailVerificationNotification();
+
+        SendEmailVerificationNotification::dispatch($request->user())->delay(now()->addMinutes(2));
 
         if ($request->wantsJson()) 
         {
