@@ -41,6 +41,7 @@ Route::group(['prefix' => 'tutor'], function () {
     Route::delete('/quizpack/{quizpack}/question/{question}', 'Tutor\QuizpackController@deleteQuestion');
     Route::get('/quizpacks', 'Tutor\QuizpackController@tutorQuizpacks');
     Route::put('/quizpack/{quizpack}', 'Tutor\QuizpackController@updateQuizpack');
+    Route::delete('/quizpack/{quizpack}', 'Tutor\QuizpackController@deleteQuizpack');
 
 });
 

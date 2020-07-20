@@ -61,44 +61,7 @@ class QuizpackController extends Controller
 
     }
 
-    public function addQuestion(QuizPack $quizpack, Request $request)
-    {
-        // return $request->all();
-        $request->validate([
-            'question' => 'required',
-            'optionA' => 'required',
-            'optionB' => 'required',
-            'answer' => 'required',
-            'answer_explanation' => 'required',
-        ]);
 
-        if ($request->hasFile('image'))
-        {
-            $request->validate([
-                'image' => 'image|mimes:jpg,png,jpeg'
-            ]);
-            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
-
-            $question = $quizpack->questions()->create($request->all());
-
-            $question->update([
-                'image' => $imageName
-            ]);
-            // $request->image->move(public_path('images/question-images'), $imageName);
-            $imageName = time() . '.' . $request->thumbnail_image->getClientOriginalExtension();
-
-            $request->thumbnail_image->move(storage_path('app/public/images/answer-images/'), $imageName);
-
-        } else {
-            $question = $quizpack->questions()->create($request->all());
-        }
-
-
-        return response()->json([
-            'message' => 'question created',
-            'question' => $question
-        ], 201);
-    }
 
     public function tutorQuizpacks()
     {
@@ -138,6 +101,62 @@ class QuizpackController extends Controller
             'message' => 'Quizpack Updated',
             'quizpack' => $quizpack
         ]);
+    }
+
+    public function deleteQuizpack(QuizPack $quizpack)
+    {
+
+        if (auth('tutor')->user()->id != $quizpack->tutor_id)
+        {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        Storage::delete('/images/quizpack-thumbnails/' . $quizpack->thumbnail_image);
+
+        $quizpack->delete();
+
+        return response()->json(['success' => true, 'message' => 'Quizpack deleted']);
+    }
+
+    public function addQuestion(QuizPack $quizpack, Request $request)
+    {
+        // return $request->all();
+        $request->validate([
+            'question' => 'required',
+            'optionA' => 'required',
+            'optionB' => 'required',
+            'answer' => 'required',
+            'answer_explanation' => 'required',
+        ]);
+
+        if ($request->hasFile('image'))
+        {
+            $request->validate([
+                'image' => 'image|mimes:jpg,png,jpeg'
+            ]);
+            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
+
+            $question = $quizpack->questions()->create($request->all());
+
+            $question->update([
+                'image' => $imageName
+            ]);
+            // $request->image->move(public_path('images/question-images'), $imageName);
+            $imageName = time() . '.' . $request->thumbnail_image->getClientOriginalExtension();
+
+            $request->thumbnail_image->move(storage_path('app/public/images/answer-images/'), $imageName);
+
+        } else {
+            $question = $quizpack->questions()->create($request->all());
+        }
+
+
+        return response()->json([
+            'message' => 'question created',
+            'question' => $question
+        ], 201);
     }
 
     public function updateQuestion(Request $request, QuizPack $quizpack, Question $question)
