@@ -51,9 +51,9 @@ class QuizpackController extends Controller
 
         // $request->thumbnail_image->move(public_path('images/quizpack-thumbnails'), $imageName);
         $imageName = time() . '.' . $request->thumbnail_image->getClientOriginalExtension();
-    
+
         $request->thumbnail_image->move(storage_path('app/public/images/quizpack-thumbnails/'), $imageName);
-        
+
         return response()->json([
             'message' => 'Quizpack created',
             'quizpack' => $quizpack
@@ -86,13 +86,13 @@ class QuizpackController extends Controller
             ]);
             // $request->image->move(public_path('images/question-images'), $imageName);
             $imageName = time() . '.' . $request->thumbnail_image->getClientOriginalExtension();
-    
-            $request->thumbnail_image->move(storage_path('app/public/images/quizpack-thumbnails/'), $imageName);
-        
+
+            $request->thumbnail_image->move(storage_path('app/public/images/answer-images/'), $imageName);
+
         } else {
             $question = $quizpack->questions()->create($request->all());
         }
-       
+
 
         return response()->json([
             'message' => 'question created',
@@ -115,25 +115,24 @@ class QuizpackController extends Controller
                 'message' => 'Unauthorized'
             ], 403);
         }
-        // return $request->all();
-        //  return public_path('images/quizpack-thumbnails/' . $quizpack->thumbnail_image);
-        // dd(url() . 'images/quizpack-thumbnails/' . $quizpack->thumbnail_image);
-        if ($request->hasFile('thumbnail_image'))
-        {
-            $imageName = time() . '.' . $request->thumbnail_image->getClientOriginalExtension();
-    
-            $request->thumbnail_image->move(storage_path('app/public/images/quizpack-thumbnails/'), $imageName);
 
-            Storage::delete('/images/quizpack-thumbnails/' . $quizpack->thumbnail_image);
+        $request->validate([
+            'title' => 'required',
+            'short_description' => 'required',
+            'detailed_description' => 'required',
+            'course_id' => 'required',
+            'time' => 'required|integer',
+            'thumbnail_image' => 'required|image|mimes:jpeg,png,jpg'
+        ]);
 
-            $quizpack->update($request->all());
-            $quizpack->update([
-                'thumbnail_image' => $imageName
-            ]);
-        } else 
-        {
-            $quizpack->update($request->all()); 
-        }
+        $imageName = time() . '.' . $request->thumbnail_image->getClientOriginalExtension();
+
+        $request->thumbnail_image->move(storage_path('app/public/images/quizpack-thumbnails/'), $imageName);
+
+        Storage::delete('/images/quizpack-thumbnails/' . $quizpack->thumbnail_image);
+
+        $quizpack->update($request->all('title', 'short_description', 'detailed_description',
+                                        'course_id', 'time') + ['thumbnail_image' => $imageName]);
 
         return response()->json([
             'message' => 'Quizpack Updated',
@@ -150,6 +149,34 @@ class QuizpackController extends Controller
             ], 403);
         }
 
-        return response()->json(request()->all());
+        $request->validate([
+            'question' => 'required',
+            'optionA' => 'required',
+            'optionB' => 'required',
+            'answer' => 'required',
+            'answer_explanation' => 'required',
+        ]);
+
+        if ($request->hasFile('image'))
+        {
+            $request->validate([
+                'image' => 'image|mimes:jpg,png,jpeg'
+            ]);
+            $imageToDelete = $question->image;
+            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
+
+            $question->update($request->all('question', 'optionA', 'optionB', 'optionC', 'optionD', 'optionE') +
+                                                        ['image' => $imageName]);
+
+            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
+
+            $request->image->move(storage_path('app/public/images/answer-images/'), $imageName);
+
+            Storage::delete('/images/answer-images/' .$imageToDelete);
+        } else {
+            $question = $question->update($request->all());
+        }
+
+        return response()->json(['success' => true, 'question' => $question]);
     }
 }

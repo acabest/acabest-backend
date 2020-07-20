@@ -9,6 +9,10 @@ class QuizPack extends Model
     //
     protected $fillable = ['title', 'short_description', 'detailed_description',
                             'time', 'course_id', 'thumbnail_image'];
+    /**
+     * @var mixed
+     */
+
 
     public function questions()
     {

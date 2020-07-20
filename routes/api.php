@@ -24,22 +24,24 @@ Route::group(['prefix' => 'student'], function () {
 
     Route::get('/email/resend', 'Student\VerificationController@resend')->name('verification.resend');
     Route::get('/email/verify/{id}/{hash}', 'Student\VerificationController@verify')->name('verification.verify');
-    
+
     Route::post('/password/reset/create', 'Student\PasswordResetController@create');
     Route::get('/password/reset/{token}', 'Student\PasswordResetController@find');
     Route::post('/password/reset', 'Student\PasswordResetController@reset');
-    Route::get('/details', 'Student\AuthController@studentDetails'); 
+    Route::get('/details', 'Student\AuthController@studentDetails');
 });
 
 Route::group(['prefix' => 'tutor'], function () {
-    
+
     Route::post('/register', 'Tutor\AuthController@register');
     Route::post('/login', 'Tutor\AuthController@login');
     Route::post('/quizpack/create', 'Tutor\QuizpackController@create');
     Route::post('/quizpack/{quizpack}/question', 'Tutor\QuizpackController@addQuestion');
-    Route::post('/quizpack/{quizpack}/question/{question}', 'Tutor\QuizpackController@updateQuestion');
+    Route::put('/quizpack/{quizpack}/question/{question}', 'Tutor\QuizpackController@updateQuestion');
+    Route::
     Route::get('/quizpacks', 'Tutor\QuizpackController@tutorQuizpacks');
-    Route::patch('/quizpack/{quizpack}', 'Tutor\QuizpackController@updateQuizpack');
+    Route::put('/quizpack/{quizpack}', 'Tutor\QuizpackController@updateQuizpack');
+
 });
 
 Route::get('/login/{service}', 'SocialLoginController@redirect');
