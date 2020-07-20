@@ -179,4 +179,13 @@ class QuizpackController extends Controller
 
         return response()->json(['success' => true, 'question' => $question]);
     }
+
+    public function deleteQuestion(Request $request, QuizPack $quizpack, Question $question)
+    {
+        Storage::delete('/images/answer-images/' .$question->image);
+
+        $question->delete();
+
+        return response()->json(['success' => true, 'message' => 'Question deleted']);
+    }
 }
