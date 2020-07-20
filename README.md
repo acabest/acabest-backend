@@ -7,4 +7,5 @@
 ### API documentation => https://bit.ly/3dcQrYa
 
 ### Features
-- Student Authentication System [Registeration, Email Verification, Login, Password Reset ]
+- Student and Tutor Auth System
+- Tutor quizpack and questions management
