@@ -25,7 +25,7 @@ add('writable_dirs', []);
 host('54.172.102.173')
     ->user('deployer')
     ->identityFile('~/.ssh/acabest_ec2_staging')
-    ->set('deploy_path', '~/var/www/html/acabest_backend');
+    ->set('deploy_path', '/var/www/html/acabest_backend');
 
 // Tasks
 
@@ -33,10 +33,17 @@ task('build', function () {
     run('cd {{release_path}} && build');
 });
 
+task('reload:nginx', function () {
+    run('sudo systemctl restart nginx');
+});
+
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
 
+// restart nginx after deploy
+after('deploy', 'reload:nginx');
+
 // Migrate database before symlink new release.
 
-//before('deploy:symlink', 'artisan:migrate');
+before('deploy:symlink', 'artisan:migrate');
 
