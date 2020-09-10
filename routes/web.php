@@ -16,8 +16,4 @@
 // });
 
 // Auth::routes();
-Route::get('/', function(){ 
-    return response()->json([
-        'message' => 'Acabest API is running'
-    ]);
-});
+Route::get('/', 'HomeController@index');
