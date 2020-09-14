@@ -20,7 +20,9 @@ class CreateQuizPacksTable extends Migration
             $table->string('title');
             $table->text('short_description');
             $table->text('detailed_description');
-            $table->bigInteger('course_id');
+            $table->bigInteger('category_id');
+            $table->bigInteger('subcategory_id');
+            $table->bigInteger('subsubcategory_id');
             $table->integer('time');
             $table->string('thumbnail_image');
             $table->timestamps();

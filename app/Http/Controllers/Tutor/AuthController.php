@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Tutor;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\TutorInfoResource;
 use App\Tutor;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -28,16 +31,19 @@ class AuthController extends Controller
         ]);
 
 
-        $imageName = time() . '.' . $request->image->getClientOriginalExtension();
+//        $imageName = time() . '.' . $request->image->getClientOriginalExtension();
+        $path = Storage::disk(getenv('STORAGE'))->putFile('/images/profiles', new File($request->image));
+
+        $path = getenv('APP_ENV') == 'local' ? $path : getenv('AWS_BUCKET_URI') . $path;
 
         $tutor = Tutor::create($request->all());
 
         $tutor->update([
             'password' => Hash::make($request->password),
-            'image' => 'images/' . $imageName
+            'image' => $path
         ]);
 
-        $request->image->move(public_path('images/profiles'), $imageName);
+//        $request->image->move(public_path('images/profiles'), $imageName);
 
         $credentials = [
             'email' => $request->email,
@@ -52,11 +58,11 @@ class AuthController extends Controller
         }
 
         return $this->respondWithToken($tutor, $token);
-        
+
     }
 
     public function login(Request $request)
-    {   
+    {
         $request->validate([
             'email' => 'required',
             'password' => 'required'
@@ -70,11 +76,13 @@ class AuthController extends Controller
                 'message' => 'Invalid Credentials'
             ], 422);
         }
+        $tutor = Tutor::where(['email' => $request->email])->first();
 
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('tutor')->factory()->getTTL() * 60
+            'expires_in' => auth('tutor')->factory()->getTTL() * 60,
+            'tutor' => new TutorInfoResource($tutor)
         ]);
     }
 

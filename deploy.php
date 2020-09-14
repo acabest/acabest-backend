@@ -23,6 +23,7 @@ add('writable_dirs', []);
 // Hosts
 
 host('54.172.102.173')
+
     ->user('deployer')
     ->identityFile('~/.ssh/acabest_ec2_staging')
     ->set('deploy_path', '/var/www/html/acabest_backend');
@@ -45,5 +46,5 @@ after('deploy', 'reload:nginx');
 
 // Migrate database before symlink new release.
 
-before('deploy:symlink', 'artisan:migrate');
+before('deploy:symlink', 'artisan:migrate:fresh');
 

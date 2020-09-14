@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tutor;
 
 use App\QuizPack;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\QuizpackResource;
@@ -23,7 +24,9 @@ class QuizpackController extends Controller
             'title' => 'required',
             'short_description' => 'required',
             'detailed_description' => 'required',
-            'course_id' => 'required',
+            'category_id' => 'required',
+            'subcategory_id' => 'required',
+            'subsubcategory_id' => 'required',
             'time' => 'required|integer',
             'thumbnail_image' => 'required|image|mimes:jpeg,png,jpg'
         ]);
@@ -32,7 +35,9 @@ class QuizpackController extends Controller
             'title' => $request->title,
             'short_description' => $request->short_description,
             'detailed_description' => $request->detailed_description,
-            'course_id' => $request->course_id,
+            'category_id' => $request->category_id,
+            'subcategory_id' => $request->subcategory_id,
+            'subsubcategory_id' => $request->subsubcategory_id,
             'time' => $request->time
         ])->get()->first();
 
@@ -43,25 +48,23 @@ class QuizpackController extends Controller
         }
         $imageName = time() . '.' . $request->thumbnail_image->getClientOriginalExtension();
 
+        $path = Storage::disk(getenv('STORAGE'))->putFile('/images/quizpack-thumbnails', new File($request->thumbnail_image));
+
+        $path = getenv('APP_ENV') == 'local' ? $path : getenv('AWS_BUCKET_URI') . $path;
+
         $quizpack = auth('tutor')->user()->quizpacks()->create($request->all());
 
         $quizpack->update([
-            'thumbnail_image' => $imageName
+            'thumbnail_image' => $path
         ]);
 
-        // $request->thumbnail_image->move(public_path('images/quizpack-thumbnails'), $imageName);
-        $imageName = time() . '.' . $request->thumbnail_image->getClientOriginalExtension();
-
-        $request->thumbnail_image->move(storage_path('app/public/images/quizpack-thumbnails/'), $imageName);
 
         return response()->json([
             'message' => 'Quizpack created',
-            'quizpack' => $quizpack
+            'quizpack' => new QuizpackResource($quizpack)
         ], 201);
 
     }
-
-
 
     public function tutorQuizpacks()
     {
@@ -83,23 +86,26 @@ class QuizpackController extends Controller
             'title' => 'required',
             'short_description' => 'required',
             'detailed_description' => 'required',
-            'course_id' => 'required',
+            'category_id' => 'required',
+            'subcategory_id' => 'required',
+            'subsubcategory_id' => 'required',
             'time' => 'required|integer',
             'thumbnail_image' => 'required|image|mimes:jpeg,png,jpg'
         ]);
 
-        $imageName = time() . '.' . $request->thumbnail_image->getClientOriginalExtension();
+        $path = Storage::disk(getenv('STORAGE'))->putFile('/images/quizpack-thumbnails', new File($request->thumbnail_image));
 
-        $request->thumbnail_image->move(storage_path('app/public/images/quizpack-thumbnails/'), $imageName);
+        $path = getenv('APP_ENV') == 'local' ? $path : getenv('AWS_BUCKET_URI') . $path;
 
-        Storage::delete('/images/quizpack-thumbnails/' . $quizpack->thumbnail_image);
+
+        Storage::disk(getenv('STORAGE'))->delete('/images/quizpack-thumbnails/' . $quizpack->thumbnail_image);
 
         $quizpack->update($request->all('title', 'short_description', 'detailed_description',
-                                        'course_id', 'time') + ['thumbnail_image' => $imageName]);
+                                        'category_id', 'subcategory_id', 'subsubcategory_id',  'time') + ['thumbnail_image' => $path]);
 
         return response()->json([
             'message' => 'Quizpack Updated',
-            'quizpack' => $quizpack
+            'quizpack' => new QuizpackResource($quizpack)
         ]);
     }
 
@@ -113,7 +119,7 @@ class QuizpackController extends Controller
             ], 403);
         }
 
-        Storage::delete('/images/quizpack-thumbnails/' . $quizpack->thumbnail_image);
+        Storage::disk(getenv('STORAGE'))->delete('/images/quizpack-thumbnails/' . $quizpack->thumbnail_image);
 
         $quizpack->delete();
 
@@ -136,17 +142,16 @@ class QuizpackController extends Controller
             $request->validate([
                 'image' => 'image|mimes:jpg,png,jpeg'
             ]);
-            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
 
+            $path = Storage::disk(getenv('STORAGE'))->putFile('/images/answer-images/' . $request->image);
+
+            $path = getenv('APP_ENV') == 'local' ? $path : getenv('AWS_BUCKET_URI') . $path;
             $question = $quizpack->questions()->create($request->all());
 
             $question->update([
-                'image' => $imageName
+                'image' => $path
             ]);
-            // $request->image->move(public_path('images/question-images'), $imageName);
-            $imageName = time() . '.' . $request->thumbnail_image->getClientOriginalExtension();
 
-            $request->thumbnail_image->move(storage_path('app/public/images/answer-images/'), $imageName);
 
         } else {
             $question = $quizpack->questions()->create($request->all());
@@ -182,16 +187,16 @@ class QuizpackController extends Controller
                 'image' => 'image|mimes:jpg,png,jpeg'
             ]);
             $imageToDelete = $question->image;
-            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
+
+            $path = Storage::disk(getenv('STORAGE'))->putFile('/images/answer-images/' . $request->image);
+
+            $path = getenv('APP_ENV') == 'local' ? $path : getenv('AWS_BUCKET_URI') . $path;
 
             $question->update($request->all('question', 'optionA', 'optionB', 'optionC', 'optionD', 'optionE') +
-                                                        ['image' => $imageName]);
+                                                        ['image' => $path]);
 
-            $imageName = time() . '.' . $request->image->getClientOriginalExtension();
 
-            $request->image->move(storage_path('app/public/images/answer-images/'), $imageName);
-
-            Storage::delete('/images/answer-images/' .$imageToDelete);
+            Storage::disk(getenv('STORAGE'))->delete('/images/answer-images/' .$imageToDelete);
         } else {
             $question = $question->update($request->all());
         }
@@ -201,7 +206,7 @@ class QuizpackController extends Controller
 
     public function deleteQuestion(Request $request, QuizPack $quizpack, Question $question)
     {
-        Storage::delete('/images/answer-images/' .$question->image);
+        Storage::disk(getenv('STORAGE'))->delete('/images/answer-images/' .$question->image);
 
         $question->delete();
 

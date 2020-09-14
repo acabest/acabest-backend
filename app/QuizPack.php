@@ -8,7 +8,8 @@ class QuizPack extends Model
 {
     //
     protected $fillable = ['title', 'short_description', 'detailed_description',
-                            'time', 'course_id', 'thumbnail_image'];
+                            'time', 'category_id', 'subcategory_id',
+        'subsubcategory_id', 'thumbnail_image'];
     /**
      * @var mixed
      */
