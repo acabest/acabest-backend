@@ -40,4 +40,9 @@ class Tutor extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(QuizPack::class);
     }
+
+    public function program()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

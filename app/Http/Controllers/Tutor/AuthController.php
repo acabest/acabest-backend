@@ -19,7 +19,7 @@ class AuthController extends Controller
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
-            'program' => 'required',
+            'category_id' => 'required',
             'position' => 'required',
             'institution' => 'required',
             'short_description' => 'required',

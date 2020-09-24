@@ -17,7 +17,7 @@ class CreateTutorsTable extends Migration
             $table->bigIncrements('id');
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('program');
+            $table->integer('category_id');
             $table->string('institution');
             $table->string('position');
             $table->text('short_description');
