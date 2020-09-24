@@ -50,7 +50,8 @@ class QuizpackController extends Controller
 
         $path = Storage::disk(getenv('STORAGE'))->putFile('/images/quizpack-thumbnails', new File($request->thumbnail_image));
 
-        $path = getenv('APP_ENV') == 'local' ? $path : getenv('AWS_BUCKET_URI') . $path;
+//        $path = getenv('APP_ENV') == 'local' ? $path : getenv('AWS_BUCKET_URI') . $path;
+        $path = getenv('AWS_BUCKET_URI') . $path;
 
         $quizpack = auth('tutor')->user()->quizpacks()->create($request->all());
 
@@ -95,7 +96,7 @@ class QuizpackController extends Controller
 
         $path = Storage::disk(getenv('STORAGE'))->putFile('/images/quizpack-thumbnails', new File($request->thumbnail_image));
 
-        $path = getenv('APP_ENV') == 'local' ? $path : getenv('AWS_BUCKET_URI') . $path;
+        $path = getenv('AWS_BUCKET_URI') . $path;
 
 
         Storage::disk(getenv('STORAGE'))->delete('/images/quizpack-thumbnails/' . $quizpack->thumbnail_image);
@@ -145,7 +146,7 @@ class QuizpackController extends Controller
 
             $path = Storage::disk(getenv('STORAGE'))->putFile('/images/answer-images/' . $request->image);
 
-            $path = getenv('APP_ENV') == 'local' ? $path : getenv('AWS_BUCKET_URI') . $path;
+            $path =  getenv('AWS_BUCKET_URI') . $path;
             $question = $quizpack->questions()->create($request->all());
 
             $question->update([
@@ -190,7 +191,7 @@ class QuizpackController extends Controller
 
             $path = Storage::disk(getenv('STORAGE'))->putFile('/images/answer-images/' . $request->image);
 
-            $path = getenv('APP_ENV') == 'local' ? $path : getenv('AWS_BUCKET_URI') . $path;
+            $path = getenv('AWS_BUCKET_URI') . $path;
 
             $question->update($request->all('question', 'optionA', 'optionB', 'optionC', 'optionD', 'optionE') +
                                                         ['image' => $path]);

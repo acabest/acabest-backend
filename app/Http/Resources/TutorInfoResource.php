@@ -24,6 +24,7 @@ class TutorInfoResource extends JsonResource
             'mobile_number' => $this->mobile_number,
             'email' => $this->mobile_number,
             'position' => $this->position,
+            'image' => $this->image,
             'quizpacks' => $this->quizpacks
         ];
     }

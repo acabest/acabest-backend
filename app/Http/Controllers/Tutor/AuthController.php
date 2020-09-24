@@ -34,7 +34,8 @@ class AuthController extends Controller
 //        $imageName = time() . '.' . $request->image->getClientOriginalExtension();
         $path = Storage::disk(getenv('STORAGE'))->putFile('/images/profiles', new File($request->image));
 
-        $path = getenv('APP_ENV') == 'local' ? $path : getenv('AWS_BUCKET_URI') . $path;
+//        $path = getenv('APP_ENV') == 'local' ? $path : getenv('AWS_BUCKET_URI') . $path;
+        $path = getenv('AWS_BUCKET_URI') . $path;
 
         $tutor = Tutor::create($request->all());
 
@@ -57,7 +58,7 @@ class AuthController extends Controller
             ], 422);
         }
 
-        return $this->respondWithToken($tutor, $token);
+        return $this->respondWithToken(new TutorInfoResource($tutor), $token);
 
     }
 
