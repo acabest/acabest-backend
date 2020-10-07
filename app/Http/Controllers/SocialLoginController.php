@@ -15,7 +15,7 @@ use Tymon\JWTAuth\JWTAuth;
 class SocialLoginController extends Controller
 {
     //
-    
+
     protected $auth;
     protected $new;
     public function __construct(JWTAuth $auth)
@@ -32,23 +32,24 @@ class SocialLoginController extends Controller
     public function callback($service)
     {
 
-        try {
+        try
+        {
             $serviceUser = Socialite::driver($service)->stateless()->user();
 
         } catch(InvalidStateException $e) {
             return redirect(env('CLIENT_BASE_URL'). '?error=Unable to Login using ' . $service);
         }
-       
+
 
         $email = $serviceUser->getEmail();
-        
+
         if ($service != 'google')
         {
             $email = $serviceUser->getId() . '@'. $service . 'local';
         }
 
         $user = $this->getExistingUser($serviceUser, $email, $service);
-        
+
         if (!$user) {
             $this->new = true;
             $user = User::create([
@@ -58,10 +59,10 @@ class SocialLoginController extends Controller
                 'email_verified_at' => Carbon::now(),
                 'password' => ''
             ]);
-            
+
         }
 
-        
+
         if ($this->needsToCreateSocial($user, $service)) {
             UserSocial::create([
                 'user_id' => $user->id,
@@ -71,9 +72,10 @@ class SocialLoginController extends Controller
         };
 
         // $token = auth('student')->attempt(['email' => $user->email, 'password'=>$user->password]);
-        if ($this->new) {
-            return redirect(env('CLIENT_BASE_URL'). '?token='. $this->auth->fromUser($user)  . '&new=true'); 
-           
+        if ($this->new)
+        {
+            return redirect(env('CLIENT_BASE_URL'). '?token='. $this->auth->fromUser($user)  . '&new=true');
+
         }else {
           return redirect(env('CLIENT_BASE_URL'). '?token='. $this->auth->fromUser($user));
         }
@@ -87,7 +89,8 @@ class SocialLoginController extends Controller
 
     public function getExistingUser($serviceUser, $email , $service)
     {
-        if ($service == 'google') {
+        if ($service == 'google')
+        {
 
             return User::where('email', $email)->orWhereHas('social', function($q) use ($serviceUser, $service) {
                 $q->where('social_id', $serviceUser->getId())->where('service', $service);
@@ -100,7 +103,7 @@ class SocialLoginController extends Controller
             return $userSocial ? $userSocial->user : null;
         }
 
-        
+
     }
 
     public function update(Request $request)

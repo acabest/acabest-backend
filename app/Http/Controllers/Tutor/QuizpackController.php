@@ -144,7 +144,7 @@ class QuizpackController extends Controller
                 'image' => 'image|mimes:jpg,png,jpeg'
             ]);
 
-            $path = Storage::disk(getenv('STORAGE'))->putFile('/images/answer-images/' . $request->image);
+            $path = Storage::disk(getenv('STORAGE'))->putFile('/images/answer-images/' , new File($request->image));
 
             $path =  getenv('AWS_BUCKET_URI') . $path;
             $question = $quizpack->questions()->create($request->all());
@@ -189,7 +189,7 @@ class QuizpackController extends Controller
             ]);
             $imageToDelete = $question->image;
 
-            $path = Storage::disk(getenv('STORAGE'))->putFile('/images/answer-images/' . $request->image);
+            $path = Storage::disk(getenv('STORAGE'))->putFile('/images/answer-images/', new File($request->image));
 
             $path = getenv('AWS_BUCKET_URI') . $path;
 
