@@ -43,7 +43,9 @@ Route::group(['prefix' => 'tutor'], function () {
     Route::put('/quizpack/{quizpack}', 'Tutor\QuizpackController@updateQuizpack');
     Route::delete('/quizpack/{quizpack}', 'Tutor\QuizpackController@deleteQuizpack');
 
+
 });
+Route::get('/quizpack/{quizpack}/questions', 'Tutor\QuizpackController@questions');
 
 Route::get('/login/{service}', 'SocialLoginController@redirect');
 Route::get('/login/{service}/callback', 'SocialLoginController@callback');

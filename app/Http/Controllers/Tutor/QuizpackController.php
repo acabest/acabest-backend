@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Tutor;
 
+use App\Http\Resources\QuestionResource;
 use App\QuizPack;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class QuizpackController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:tutor');
+        $this->middleware('auth:tutor')->except(['questions']);
     }
     public function create(Request $request)
     {
@@ -163,6 +164,13 @@ class QuizpackController extends Controller
             'message' => 'question created',
             'question' => $question
         ], 201);
+    }
+
+    public function questions(Request $request, Quizpack $quizpack)
+    {
+        return response()->json([
+            'questions' => QuestionResource::collection($quizpack->questions)
+        ]);
     }
 
     public function updateQuestion(Request $request, QuizPack $quizpack, Question $question)
